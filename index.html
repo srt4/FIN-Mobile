@@ -167,6 +167,7 @@ geonames.search = function(lat,lng) {
 		$.each(data, function(index, item) {
 			// need to create "geopoints" for the item location and current location
 			var geo1 = { lat: lat , lon: lng };
+			//DEBUG: geopoint for Everett, WA var geo1 = { lat: 47.989922, lon: -122.188568};
 			var geo2 = { lat: item.lat / 1000000 , lon: item.long / 1000000 };
 			var dist = Math.round(calcDist(geo1, geo2) * 100)/100;
 			if (item.floor_names.length == 0) 
@@ -263,7 +264,7 @@ function onError(msg) {
 }
 
 li {
-	height:65px;
+	min-height:65px;
 }
 
 /* I really need to move this all over to a consolidated CSS file
