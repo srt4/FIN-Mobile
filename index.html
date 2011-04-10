@@ -1,0 +1,304 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<title>Landmark Finder</title> 
+<!--<link rel="stylesheet" href="jqueryMobile.css" />-->
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
+<script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
+
+<script>
+// some joyful maths to calculate the distance between two lat/long pairs
+// code adapted from
+// http://pietschsoft.com/post/2008/02/01/Calculate-Distance-Between-Geocodes-in-C-and-JavaScript.aspx
+// helper method
+function calcDist(geoPoint1, geoPoint2) {
+	var lat1 = geoPoint1.lat;
+	var lat2 = geoPoint2.lat;
+	var lon1 = geoPoint1.lon;
+	var lon2 = geoPoint2.lon;
+	return GeoCodeCalc.CalcDistance(lat1, lon1, lat2, lon2 , GeoCodeCalc.EarthRadiusInMiles); 
+}
+
+var GeoCodeCalc = {};
+
+GeoCodeCalc.EarthRadiusInMiles = 3956.0;
+GeoCodeCalc.EarthRadiusInKilometers = 6367.0;
+
+GeoCodeCalc.ToRadian = function(v) { return v * (Math.PI / 180);};
+	GeoCodeCalc.DiffRadian = function(v1, v2) { 
+	return GeoCodeCalc.ToRadian(v2) - GeoCodeCalc.ToRadian(v1);
+};
+
+GeoCodeCalc.CalcDistance = function(lat1, lng1, lat2, lng2, radius) { 
+	return radius * 2 * Math.asin( Math.min(1, Math.sqrt( ( Math.pow(Math.sin((GeoCodeCalc.DiffRadian(lat1, lat2)) / 2.0), 2.0) + Math.cos(GeoCodeCalc.ToRadian(lat1)) * Math.cos(GeoCodeCalc.ToRadian(lat2)) * Math.pow(Math.sin((GeoCodeCalc.DiffRadian(lng1, lng2)) / 2.0), 2.0) ) ) ) );
+};
+</script>
+
+<script type="application/javascript"> 
+// very hacky, I should narrow the scope of this variable ...
+var cat = "stuff";
+var currLoc = { lat: -1 , lon: -1};
+
+$(document).ready(function(){
+	// Add a click listener on the button to get the location data
+	$('#getLocation').click(function(){
+		// check if the location has been queried already
+		if (currLoc.lat == -1 || currLoc.lon == -1) {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(onSuccess, onError);
+			} else {
+				// If location is not supported on this platform, disable it
+				$('#getLocation').value = "Geolocation not supported";
+				$('#getLocation').unbind('click');
+			}
+		}
+	});
+
+	// add listener for coffee... I don't want to have to do this for
+	// every. freaking. category.
+	$("#coffee").click(function() {
+		if (navigator.geolocation) {
+			cat = "coffee";
+			navigator.geolocation.getCurrentPosition(onSuccess, onError);
+		} else {
+			// If location is not supported on this platform, disable it
+			$('#coffee').value = "Geolocation not supported";
+			$('#coffee').unbind('click');
+		}		
+	});
+	// well, this is redundant.
+	$("#dining").click(function() {
+		if (navigator.geolocation) {
+			cat = "dining";
+			navigator.geolocation.getCurrentPosition(onSuccess, onError);
+		} else {
+			// If location is not supported on this platform, disable it
+			$('#dining').value = "Geolocation not supported";
+			$('#dining').unbind('click');
+		}		
+	});
+	// and even more redundant.
+	$("#vending").click(function() {
+		if (navigator.geolocation) {
+			cat = "vending";
+			navigator.geolocation.getCurrentPosition(onSuccess, onError);
+		} else {
+			// If location is not supported on this platform, disable it
+			$('#vending').value = "Geolocation not supported";
+			$('#vending').unbind('click');
+		}		
+	});
+	buildingsArray = new Array();
+	var buildingsJsonUrl = "http://fincdn.org/getBuildings.php";
+	$.getJSON(buildingsJsonUrl, 
+		function(json) {
+			$.each(json, function(index, item){
+				var array = new Array();
+				array["LONG" + item.long + ""] = item.name;
+				buildingsArray["LAT" + item.lat + ""] = array;
+			});
+		}
+	);
+	
+});
+ 
+// create the geonames namespace for calling the API
+var geonames = {};
+// TODO: Hacky, fix
+var destroyPage = false;
+geonames.baseURL = "http://ws.geonames.org/";
+geonames.method = "FINsearch";
+geonames.search = function(lat,lng) {	
+	//TODO: change this so that it accepts category names ... (FIXED)
+	// also, we want to search outside, soon.
+	$.getJSON("http://fincdn.org/getAllLocations.php?lat=47654799&long=-122307776&cat=" + cat.toLowerCase() + "&rad=6020" , function(data){
+		// This foreach is O(N) where N is number of items
+		var finItems = new Array();
+		
+		$.each(data, function(index, item) {
+			// need to create "geopoints" for the item location and current location
+			var geo1 = { lat: lat , lon: lng };
+			var geo1string = ( " geo1 " + geo1.lat + " " + geo1.lon);
+			var geo2 = { lat: item.lat / 1000000 , lon: item.long / 1000000 };
+			var geo2string = ( " geo2 " + geo2.lat + " " + geo2.lon);
+			var dist = Math.round(calcDist(geo1, geo2) * 100)/100;
+			var finItem = {
+				distance: dist,
+				building: buildingsArray["LAT" + item.lat]["LONG" + item.long],
+				walking: Math.round(dist * 25),
+				info: item.info.replace(/(\\n|\\)/g, " | ")
+			};
+			finItems.push(finItem);
+		});
+		
+		// O(?) Not sure how JS sorts
+		finItems.sort(finSort);
+		
+		// Sorting by distance, farther distances are lower in priority
+		function finSort(placeA, placeB) {
+			if (placeA.distance > placeB.distance) return 1;
+			else if (placeA.distance < placeB.distance) return -1;
+			else return 0;
+		}
+		
+		//TODO: Hacky, fix
+		if (destroyPage) $("#wikiList").empty();
+		destroyPage = true;
+		// O(N) - iterate through each FIN item
+		$.each(finItems, function(index, item) {
+			// is it far away? color it red
+			var distColor = item.distance > 0.5 ? "#800000" : "green";
+			// append everything to the dom
+			$('<li></li>')
+			.hide()
+			.append('<h1><em>'+ item.building + '</em></h1><h3>'+ item.info + '</h3><span class="ui-li-aside" style="margin-right:-75px; width:75px; font-size:12px; color:' + distColor + '"><span style="font-size:18px">' + item.distance + '</span> mi <br /> <span style="font-size:12px; color: #222">' + item.walking + ' min</span></span>')
+			.appendTo('#wikiList')
+			.show();
+		});
+		
+		// Once the data is added to the DOM, make the transition
+		$.mobile.changePage('#dashboard',"slide",false,true);
+	
+		// refresh the list to make sure the theme applies properly
+		$('#wikiList').listview('refresh');
+	});
+};
+ 
+// Success function for Geolocation call
+function onSuccess(position) {
+	currLoc = { lat: position.coords.latitude, lon: position.coords.longitude };
+	geonames.search(position.coords.latitude,position.coords.longitude);
+}
+ 
+// Error function for Geolocation call
+function onError(msg) {
+	alert(msg);
+}
+ 
+</script> 
+
+<style type="text/css">
+	.ui-bar-a {
+		border: 1px solid 		#2A2A2A;
+		background: 			#111111;
+		color: 					#ffffff;
+		font-weight: bold;
+		text-shadow: 0 1px 1px #000000;
+		background-image: -moz-linear-gradient(top, 
+								#DEB511, 
+								#C79900);
+		background-image: -webkit-gradient(linear,left top,left bottom,
+			color-stop(0, 	#DEB511),
+			color-stop(1, 	#C79900));
+		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#3c3c3c', EndColorStr='#111111')";
+	}
+	
+	.ui-body-a {
+		border: 1px solid 		#2A2A2A;
+		background: 			#222222;
+		color: 					#fff;
+		 text-shadow: 0 1px 0 	#000;
+		font-weight: normal;
+		background-image: -moz-linear-gradient(top, 
+								#38265D, 
+								#292336);
+		background-image: -webkit-gradient(linear,left top,left bottom,
+			color-stop(0, 		#38265D),
+			color-stop(1.5, 		#292336));
+		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#222222)')";
+	}
+	
+	li {
+		height:65px;
+	}
+	
+	/* I really need to move this all over to a consolidated CSS file
+	with the jQuery Mobile CSS file, or something similar */
+	
+	.ui-btn-active {
+		background: #FDFDFD -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
+		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
+		border: 1px solid gray;
+		font-weight: bold;
+		text-shadow: white 0px 1px 1px;
+	}
+	
+	/* Stop jquery from turning my text white */
+	.ui-btn-active a.ui-link-inherit {
+		color: #2F3E46;
+	}
+	
+.ui-btn-active {
+background: #FDFDFD -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
+background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
+border: 1px solid gray;
+font-weight: bold;
+text-shadow: white 0px 1px 1px;
+}
+</style>
+</head> 
+ 
+<body> 
+<div data-role="page" data-theme="a"> 
+	<div data-role="header"> 
+    	<h1>Select a Category</h1> 
+	</div> 
+    <div data-role="content"> 
+		<ul data-role="listview" data-inset="true" data-split-theme="a" data-split-icon="arrow-r"> 
+			<li><a id="coffee"> 
+				<img src="drawable/coffee.png" height="60" /> 
+				<h1 style="valign:middle">Coffee</h1>
+				</a> 
+			</li> 
+			<li><a id="vending"> 
+				<img src="drawable/vending.png" height="60" /> 
+				<h1>Vending</h1> 
+				</a> 
+			</li> 
+			<li><a id="dining"> 
+				<img src="drawable/dining.png" height="60" /> 
+				<h1>Dining</h1> 
+				</a> 
+			</li> 
+			<li><a href="index.html"> 
+				<img src="drawable/mailboxes.png" height="60" /> 
+				<h1>Mailboxes</h1> 
+				</a> 
+			</li> 
+			<li><a href="index.html"> 
+				<img src="drawable/school_supplies.png" height="60" /> 
+				<h1>School Supplies</h1> 
+				</a> 
+			</li> 
+			<li><a href="index.html"> 
+				<img src="drawable/restrooms.png" height="60" /> 
+				<h1>Restrooms</h1> 
+				</a> 
+			</li> 
+		</ul> 
+		<div data-role="fieldcontain">
+			<input type="search"  id="search" value="" data-theme="c" />
+			<input type="button" class="button" value="Get My Location" id="getLocation" />
+		</div>
+    </div> 
+    <div data-role="footer"> 
+    	<h4>Project FIN <img src="drawable/icon_with_stroke.png" style="height:30px;vertical-align:middle;line-height:30px" /></h4>
+    </div> 
+</div> 
+<div data-role="page" id="dashboard"> 
+	<div data-role="header"> 
+    	<h1>Placemarks</h1> 
+    </div> 
+    <div data-role="content"> 
+    	<ul id="wikiList" data-role="listview" data-theme="c"> 
+        </ul> 
+    </div> 
+    <div data-role="footer"> 
+    	<h4>Project FIN <img src="drawable/icon_with_stroke.png" style="height:30px;vertical-align:middle;line-height:30px" /></h4>
+    </div> 
+</div> 
+</body> 
+</html> 
