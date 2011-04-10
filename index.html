@@ -35,6 +35,20 @@ GeoCodeCalc.ToRadian = function(v) { return v * (Math.PI / 180);};
 GeoCodeCalc.CalcDistance = function(lat1, lng1, lat2, lng2, radius) { 
 	return radius * 2 * Math.asin( Math.min(1, Math.sqrt( ( Math.pow(Math.sin((GeoCodeCalc.DiffRadian(lat1, lat2)) / 2.0), 2.0) + Math.cos(GeoCodeCalc.ToRadian(lat1)) * Math.cos(GeoCodeCalc.ToRadian(lat2)) * Math.pow(Math.sin((GeoCodeCalc.DiffRadian(lng1, lng2)) / 2.0), 2.0) ) ) ) );
 };
+
+// Horrible way to suppress duplicate building listings for category "restrooms"
+Array.prototype.contains = function(obj) {
+  var i = this.length;
+  while (i--) {
+	// compare on the object building, also not a good practice ... but it works for now
+	// breaks if there's two things listed at one lat and are outdoor
+	// TODO: fix
+    if (this[i].building== obj.building && this[i].geo.lat == obj.geo.lat) {
+      return true;
+    }
+  }
+  return false;
+}
 </script>
 
 <script type="application/javascript"> 
@@ -91,6 +105,36 @@ $(document).ready(function(){
 			$('#vending').unbind('click');
 		}		
 	});
+	$("#mailboxes").click(function() {
+		if (navigator.geolocation) {
+			cat = "mailboxes";
+			navigator.geolocation.getCurrentPosition(onSuccess, onError);
+		} else {
+			// If location is not supported on this platform, disable it
+			$('#mailboxes').value = "Geolocation not supported";
+			$('#mailboxes').unbind('click');
+		}		
+	});
+	$("#school_supplies").click(function() {
+		if (navigator.geolocation) {
+			cat = "school_supplies";
+			navigator.geolocation.getCurrentPosition(onSuccess, onError);
+		} else {
+			// If location is not supported on this platform, disable it
+			$('#school_supplies').value = "Geolocation not supported";
+			$('#school_supplies').unbind('click');
+		}		
+	});
+	$("#restrooms").click(function() {
+		if (navigator.geolocation) {
+			cat = "restrooms";
+			navigator.geolocation.getCurrentPosition(onSuccess, onError);
+		} else {
+			// If location is not supported on this platform, disable it
+			$('#restrooms').value = "Geolocation not supported";
+			$('#restrooms').unbind('click');
+		}		
+	});
 	buildingsArray = new Array();
 	var buildingsJsonUrl = "http://fincdn.org/getBuildings.php";
 	$.getJSON(buildingsJsonUrl, 
@@ -114,24 +158,36 @@ geonames.method = "FINsearch";
 geonames.search = function(lat,lng) {	
 	//TODO: change this so that it accepts category names ... (FIXED)
 	// also, we want to search outside, soon.
-	$.getJSON("http://fincdn.org/getAllLocations.php?lat=47654799&long=-122307776&cat=" + cat.toLowerCase() + "&rad=6020" , function(data){
+	
+	//TODO: Why can't I JSON-parse coffee with getLocations.php? need to use
+	// getAllLocations for coffee ...
+	if (cat == "coffee")
+		jsonUrl = "http://fincdn.org/getAllLocations.php?lat=47654799&long=-122307776&cat=" + cat.toLowerCase() + "&rad=6020";
+	else 
+		jsonUrl = "http://fincdn.org/getLocations.php?lat=47654799&long=-122307776&cat=" + cat.toLowerCase() + "&rad=6020";
+		
+	$.getJSON(jsonUrl , function(data){
 		// This foreach is O(N) where N is number of items
 		var finItems = new Array();
 		
 		$.each(data, function(index, item) {
 			// need to create "geopoints" for the item location and current location
 			var geo1 = { lat: lat , lon: lng };
-			var geo1string = ( " geo1 " + geo1.lat + " " + geo1.lon);
 			var geo2 = { lat: item.lat / 1000000 , lon: item.long / 1000000 };
-			var geo2string = ( " geo2 " + geo2.lat + " " + geo2.lon);
 			var dist = Math.round(calcDist(geo1, geo2) * 100)/100;
+			if (item.floor_names.length == 0) 
+				building = "Outdoor Location";
+			else 
+				building = buildingsArray["LAT" + item.lat]["LONG" + item.long];
 			var finItem = {
 				distance: dist,
-				building: buildingsArray["LAT" + item.lat]["LONG" + item.long],
+				building: building,
 				walking: Math.round(dist * 25),
-				info: item.info.replace(/(\\n|\\)/g, " | ")
+				info: item.info.replace(/(\\n|\\)/g, " | "),
+				geo: geo2
 			};
-			finItems.push(finItem);
+			// hack to stop duplicate restrooms from showing up
+			if(!finItems.contains(finItem)) finItems.push(finItem);
 		});
 		
 		// O(?) Not sure how JS sorts
@@ -263,25 +319,24 @@ text-shadow: white 0px 1px 1px;
 				<h1>Dining</h1> 
 				</a> 
 			</li> 
-			<li><a href="index.html"> 
+			<li><a id="mailboxes"> 
 				<img src="drawable/mailboxes.png" height="60" /> 
 				<h1>Mailboxes</h1> 
 				</a> 
 			</li> 
-			<li><a href="index.html"> 
+			<li><a id="school_supplies"> 
 				<img src="drawable/school_supplies.png" height="60" /> 
-				<h1>School Supplies</h1> 
+				<h1>Not working-School Supplies</h1> 
 				</a> 
 			</li> 
-			<li><a href="index.html"> 
+			<li><a id="restrooms"> 
 				<img src="drawable/restrooms.png" height="60" /> 
 				<h1>Restrooms</h1> 
 				</a> 
 			</li> 
 		</ul> 
 		<div data-role="fieldcontain">
-			<input type="search"  id="search" value="" data-theme="c" />
-			<input type="button" class="button" value="Get My Location" id="getLocation" />
+			<input type="search"  id="search" value="Search not implemented yet" data-theme="c" />
 		</div>
     </div> 
     <div data-role="footer"> 
