@@ -263,10 +263,6 @@ function onError(msg) {
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#222222)')";
 }
 
-li {
-	min-height:65px;
-}
-
 /* I really need to move this all over to a consolidated CSS file
 with the jQuery Mobile CSS file, or something similar */
 
@@ -299,6 +295,12 @@ with the jQuery Mobile CSS file, or something similar */
 	overflow: hidden;
 	text-overflow: none;
 	white-space: normal;
+}
+
+.ui-listview-inset .ui-li {
+	height:65px;
+	border-left-width: 1px;
+	border-right-width: 1px;
 }
 </style>
 </head> 
