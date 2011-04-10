@@ -205,12 +205,14 @@ geonames.search = function(lat,lng) {
 		destroyPage = true;
 		// O(N) - iterate through each FIN item
 		$.each(finItems, function(index, item) {
+			// generate a google maps link
+			var gmapsLink = 'http://maps.google.com/maps?z=17&q=' + item.building + '@' + item.geo.lat +',+' + item.geo.lon;
 			// is it far away? color it red
 			var distColor = item.distance > 0.5 ? "#800000" : "green";
 			// append everything to the dom
 			$('<li></li>')
 			.hide()
-			.append('<h1><em>'+ item.building + '</em></h1><h3>'+ item.info + '</h3><span class="ui-li-aside" style="margin-right:-75px; width:75px; font-size:12px; color:' + distColor + '"><span style="font-size:18px">' + item.distance + '</span> mi <br /> <span style="font-size:12px; color: #222">' + item.walking + ' min</span></span>')
+			.append('<h1><em><a href="' + gmapsLink + '">'+ item.building + '</a></em></h1><h3>'+ item.info + '</h3><span class="ui-li-aside" style="margin-right:-75px; width:75px; font-size:12px; color:' + distColor + '"><span style="font-size:18px">' + item.distance + '</span> mi <br /> <span style="font-size:12px; color: #222">' + item.walking + ' min</span></span>')
 			.appendTo('#wikiList')
 			.show();
 		});
