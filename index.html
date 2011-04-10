@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"> 
 <head> 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
-<title>Landmark Finder</title> 
+<title>findItNow UW</title> 
 <!--<link rel="stylesheet" href="jqueryMobile.css" />-->
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
 <script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
@@ -83,7 +83,6 @@ $(document).ready(function(){
 			$('#coffee').unbind('click');
 		}		
 	});
-	// well, this is redundant.
 	$("#dining").click(function() {
 		if (navigator.geolocation) {
 			cat = "dining";
@@ -94,7 +93,6 @@ $(document).ready(function(){
 			$('#dining').unbind('click');
 		}		
 	});
-	// and even more redundant.
 	$("#vending").click(function() {
 		if (navigator.geolocation) {
 			cat = "vending";
@@ -151,10 +149,6 @@ $(document).ready(function(){
  
 // create the geonames namespace for calling the API
 var geonames = {};
-// TODO: Hacky, fix
-var destroyPage = false;
-geonames.baseURL = "http://ws.geonames.org/";
-geonames.method = "FINsearch";
 geonames.search = function(lat,lng) {	
 	//TODO: change this so that it accepts category names ... (FIXED)
 	// also, we want to search outside, soon.
@@ -200,9 +194,8 @@ geonames.search = function(lat,lng) {
 			else return 0;
 		}
 		
-		//TODO: Hacky, fix
-		if (destroyPage) $("#wikiList").empty();
-		destroyPage = true;
+		// make sure the page is empty before adding to it.
+		$("#wikiList").empty();
 		// O(N) - iterate through each FIN item
 		$.each(finItems, function(index, item) {
 			// generate a google maps link
@@ -239,62 +232,72 @@ function onError(msg) {
 </script> 
 
 <style type="text/css">
-	.ui-bar-a {
-		border: 1px solid 		#2A2A2A;
-		background: 			#111111;
-		color: 					#ffffff;
-		font-weight: bold;
-		text-shadow: 0 1px 1px #000000;
-		background-image: -moz-linear-gradient(top, 
-								#DEB511, 
-								#C79900);
-		background-image: -webkit-gradient(linear,left top,left bottom,
-			color-stop(0, 	#DEB511),
-			color-stop(1, 	#C79900));
-		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#3c3c3c', EndColorStr='#111111')";
-	}
-	
-	.ui-body-a {
-		border: 1px solid 		#2A2A2A;
-		background: 			#222222;
-		color: 					#fff;
-		 text-shadow: 0 1px 0 	#000;
-		font-weight: normal;
-		background-image: -moz-linear-gradient(top, 
-								#38265D, 
-								#292336);
-		background-image: -webkit-gradient(linear,left top,left bottom,
-			color-stop(0, 		#38265D),
-			color-stop(1.5, 		#292336));
-		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#222222)')";
-	}
-	
-	li {
-		height:65px;
-	}
-	
-	/* I really need to move this all over to a consolidated CSS file
-	with the jQuery Mobile CSS file, or something similar */
-	
-	.ui-btn-active {
-		background: #FDFDFD -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
-		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
-		border: 1px solid gray;
-		font-weight: bold;
-		text-shadow: white 0px 1px 1px;
-	}
-	
-	/* Stop jquery from turning my text white */
-	.ui-btn-active a.ui-link-inherit {
-		color: #2F3E46;
-	}
-	
+.ui-bar-a {
+	border: 1px solid 		#2A2A2A;
+	background: 			#111111;
+	color: 					#ffffff;
+	font-weight: bold;
+	text-shadow: 0 1px 1px #000000;
+	background-image: -moz-linear-gradient(top, 
+							#DEB511, 
+							#C79900);
+	background-image: -webkit-gradient(linear,left top,left bottom,
+		color-stop(0, 	#DEB511),
+		color-stop(1, 	#C79900));
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#3c3c3c', EndColorStr='#111111')";
+}
+
+.ui-body-a {
+	border: 1px solid 		#2A2A2A;
+	background: 			#222222;
+	color: 					#fff;
+	 text-shadow: 0 1px 0 	#000;
+	font-weight: normal;
+	background-image: -moz-linear-gradient(top, 
+							#38265D, 
+							#292336);
+	background-image: -webkit-gradient(linear,left top,left bottom,
+		color-stop(0, 		#38265D),
+		color-stop(1.5, 		#292336));
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#222222)')";
+}
+
+li {
+	height:65px;
+}
+
+/* I really need to move this all over to a consolidated CSS file
+with the jQuery Mobile CSS file, or something similar */
+
 .ui-btn-active {
-background: #FDFDFD -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
-background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
-border: 1px solid gray;
-font-weight: bold;
-text-shadow: white 0px 1px 1px;
+	background: #FDFDFD -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
+	border: 1px solid gray;
+	font-weight: bold;
+	text-shadow: white 0px 1px 1px;
+}
+
+/* Stop jquery from turning my text white */
+.ui-btn-active a.ui-link-inherit {
+	color: #2F3E46;
+}
+
+.ui-btn-active {
+	background: #FDFDFD -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#FDFDFD));
+	border: 1px solid gray;
+	font-weight: bold;
+	text-shadow: white 0px 1px 1px;
+}
+
+.ui-li-heading {
+	display: block;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 0.6em 0px;
+	overflow: hidden;
+	text-overflow: none;
+	white-space: normal;
 }
 </style>
 </head> 
