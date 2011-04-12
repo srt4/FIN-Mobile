@@ -16,7 +16,8 @@ GeoCodeCalc.EarthRadiusInMiles = 3956.0;
 GeoCodeCalc.EarthRadiusInKilometers = 6367.0;
 
 GeoCodeCalc.ToRadian = function(v) { return v * (Math.PI / 180);};
-	GeoCodeCalc.DiffRadian = function(v1, v2) { 
+	
+GeoCodeCalc.DiffRadian = function(v1, v2) { 
 	return GeoCodeCalc.ToRadian(v2) - GeoCodeCalc.ToRadian(v1);
 };
 
