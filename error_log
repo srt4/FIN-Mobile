@@ -1,0 +1,19 @@
+[12-Apr-2011 21:38:10] PHP Parse error:  syntax error, unexpected T_VARIABLE in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 5
+[12-Apr-2011 21:38:28] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 5
+[12-Apr-2011 21:38:49] PHP Parse error:  syntax error, unexpected T_VARIABLE in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 6
+[12-Apr-2011 21:39:24] PHP Parse error:  syntax error, unexpected T_VARIABLE in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 6
+[12-Apr-2011 21:39:26] PHP Parse error:  syntax error, unexpected T_VARIABLE in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 6
+[12-Apr-2011 21:39:46] PHP Catchable fatal error:  Object of class stdClass could not be converted to string in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 6
+[12-Apr-2011 21:40:35] PHP Catchable fatal error:  Object of class stdClass could not be converted to string in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 7
+[12-Apr-2011 21:52:18] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 29
+[12-Apr-2011 21:52:32] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 29
+[12-Apr-2011 21:53:09] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 29
+[12-Apr-2011 21:53:16] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 29
+[12-Apr-2011 21:53:17] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 29
+[12-Apr-2011 21:54:12] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 29
+[12-Apr-2011 21:54:44] PHP Parse error:  syntax error, unexpected ')' in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 29
+[12-Apr-2011 22:00:25] PHP Parse error:  syntax error, unexpected T_FOREACH in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 28
+[12-Apr-2011 22:00:28] PHP Parse error:  syntax error, unexpected T_FOREACH in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 28
+[12-Apr-2011 22:00:36] PHP Parse error:  syntax error, unexpected T_FOREACH in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 28
+[12-Apr-2011 22:00:51] PHP Parse error:  syntax error, unexpected T_FOREACH in /home1/dawgsfor/public_html/fin/mobileweb/json_test.php on line 28
+[12-Apr-2011 23:13:29] PHP Warning:  Invalid argument supplied for foreach() in /home1/dawgsfor/public_html/fin/mobileweb/finMobile_getCat.php on line 35

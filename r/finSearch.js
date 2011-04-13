@@ -74,6 +74,9 @@ geonames.search = function(lat,lng) {
 function onSuccess(position) {
 	currLoc = { lat: position.coords.latitude, lon: position.coords.longitude };
 	geonames.search(position.coords.latitude,position.coords.longitude);
+    $('a').attr("href", function(i, href) {
+        return "finMobile_getCat.php?lat=" + currLoc.lat + "&lon=" + currLoc.lon + "&cat=" + href;
+    });	
 }
  
 // Error function for Geolocation call
