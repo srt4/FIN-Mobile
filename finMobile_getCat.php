@@ -3,6 +3,7 @@ $lat = $_REQUEST['lat'];
 $lon = $_REQUEST['lon'];
 $cat = $_REQUEST['cat'];
 
+// find stuff for the UW
 $jsonurl = "http://fincdn.org/getAllLocations.php?lat=47654799&long=-122307776&rad=6020";
 $jsonurl .= "&cat=" . $cat; 
 
@@ -11,6 +12,45 @@ $json_output = json_decode($json);
 
 ?>
 
+
+<?php
+
+//make the map of geopoints to buildings
+class GeoPoint {
+	public $lat;
+	public $lon;
+	
+	function __construct($lat, $lon) {
+		$this->lat = $lat;
+		$this->lon = $lon;
+	}
+}
+
+// building class, this may be a useful datatype 
+class Building {
+	public $lat;
+	public $lon;
+	
+	function __construct($lat, $lon, $name) {
+		$this->lat = $lat;
+		$this->lon = $lon;
+		$this->name = $name;
+	}  
+}
+
+// **NOTE** in PHP, === compares if objects are the same instance; == compares if they are the same based on values
+
+$jsonurl = "http://fincdn.org/getBuildings.php?lat=47654799&long=-122307776";
+$json = file_get_contents($jsonurl,0,null,null);
+$building_json = json_decode($json);
+$building_array = array();
+echo "<pre>";
+foreach ($building_json as $index=>$item) {
+	$geopoint = new GeoPoint($item->lat, $item->long);
+	$building = new Building($item->lat, $item->long, $item->name);
+	$building_array[(string)$geopoint->lat][(string)$geopoint->lon] = $building;
+}
+?>
  <!DOCTYPE html> 
 <html> 
 	<head> 
@@ -28,12 +68,11 @@ $json_output = json_decode($json);
 	</div><!-- /header -->
 
 	<div data-role="content">	
-		<ul id="wikiList" data-role="listview" data-theme="c"> 
+		<ul id="itemList" data-role="listview" data-theme="c"> 
 			<?php
-				$lat = 42953;
-				$lon = 43923;
 				foreach($json_output as $index=>$item) {
-					echo "<li>" . $_REQUEST['long'] . " " . $item->info . "</li>";
+					echo "<li> <h2>" . $building_array[(string)$item->lat][(string)$item->long]->name . "</h2>";
+					echo  str_replace('\n', "<br />", $item->info) . "</li>";
 				}
 			?>
         </ul> 
@@ -50,6 +89,10 @@ $json_output = json_decode($json);
 		<h4>Page Footer</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
+
+</body>
+</html>
+div><!-- /page -->
 
 </body>
 </html>
