@@ -2,7 +2,8 @@
 $lat = $_REQUEST['lat'];
 $lon = $_REQUEST['lon'];
 $cat = $_REQUEST['cat'];
-
+// Maybe this should change in the future
+$cat_readable = $cat == "atms" ? "ATMs" : ucwords(str_replace("_", " ", $cat)); 
 // find stuff for the UW
 $jsonurl = "http://fincdn.org/getAllLocations.php?lat=47654799&long=-122307776&rad=6020";
 $jsonurl .= "&cat=" . $cat; 
@@ -45,6 +46,8 @@ $json = file_get_contents($jsonurl,0,null,null);
 $building_json = json_decode($json);
 $building_array = array();
 echo "<pre>";
+
+// Build the map of building lat/lon pairs, to building name
 foreach ($building_json as $index=>$item) {
 	$geopoint = new GeoPoint($item->lat, $item->long);
 	$building = new Building($item->lat, $item->long, $item->name);
@@ -64,7 +67,7 @@ foreach ($building_json as $index=>$item) {
 <div data-role="page">
 
 	<div data-role="header">
-		<h1>Page Title</h1>
+		<h1>FindItNow > <?=$cat_readable?></h1>
 	</div><!-- /header -->
 
 	<div data-role="content">	
@@ -85,9 +88,7 @@ foreach ($building_json as $index=>$item) {
 			*/ ?>	
 	</div><!-- /content -->
 
-	<div data-role="footer">
-		<h4>Page Footer</h4>
-	</div><!-- /footer -->
+	<? include('r/footer.php'); ?><!-- /footer -->
 </div><!-- /page -->
 
 </body>
