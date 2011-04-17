@@ -25,7 +25,7 @@ class GeoPoint {
 		$this->lat = $lat;
 		$this->lon = $lon;
 	}
-}
+} 
 
 // item class.
 class Item {
@@ -34,12 +34,27 @@ class Item {
 	public $info;
 	public $distance;
 	
-	function __construct($lat, $lon, $info) {
-		$this->lat = $lat;
-		$this->lon = $lon;
+	function __construct($latItem, $lonItem, $info) {
+		$this->lat = $latItem;
+		$this->lon = $lonItem;
 		$this->info = $info;
-	
 	}
+}
+
+// building class, this may be a useful datatype 
+class Building {
+	public $lat;
+	public $lon;
+	public $name;
+	public $floors;
+	
+	function __construct($latItem, $lonItem, $name) {
+		$this->lat = $latItem;
+		$this->lon = $lonItem;
+		$this->name = $name;
+		$this->floors = array();
+		$this->distance = $this->distance($lat, $lon);
+	}  
 	
 	// 
 	function distance($lat1, $lon1, $unit = "m") { 
@@ -51,32 +66,20 @@ class Item {
 		$lat1 /= 1000000;
 		$lon2 /= 1000000;
 		$lon1 /= 1000000;
-	  $theta = $startlon - $lon2; 
-	  $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)); 
-	  $dist = acos($dist); 
-	  $dist = rad2deg($dist); 
-	  $miles = $dist * 60 * 1.1515;
-	  $unit = strtoupper($unit);
-	
-	  if ($unit == "K")
-	    return ($miles * 1.609344); 
-	  else if ($unit == "N") {
-	      return ($miles * 0.8684);
-	  else
-	       return $miles;
-	}
-}
+		$theta = $startlon - $lon2; 
+		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)); 
+		$dist = acos($dist); 
+		$dist = rad2deg($dist); 
+		$miles = $dist * 60 * 1.1515;
+		$unit = strtoupper($unit);
 
-// building class, this may be a useful datatype 
-class Building {
-	public $lat;
-	public $lon;
-	
-	function __construct($lat, $lon, $name) {
-		$this->lat = $lat;
-		$this->lon = $lon;
-		$this->name = $name;
-	}  
+		if ($unit == "K")
+		return ($miles * 1.609344); 
+		else if ($unit == "N")
+		  return ($miles * 0.8684);
+		else
+		   return $miles;
+	}
 }
 
 // **NOTE** in PHP, === compares if objects are the same instance; == compares if they are the same based on values
@@ -85,17 +88,32 @@ $jsonurl = "http://fincdn.org/getBuildings.php?lat=47654799&long=-122307776";
 $json = file_get_contents($jsonurl,0,null,null);
 $building_json = json_decode($json);
 $building_array = array();
+
 // Build the map of building lat/lon pairs, to building name
 foreach ($building_json as $index=>$item) {
 	$geopoint = new GeoPoint($item->lat, $item->long);
 	$building = new Building($item->lat, $item->long, $item->name);
 	$building_array[(string)$geopoint->lat][(string)$geopoint->lon] = $building;
 }
+
+$overall_array = array();
+// Go through the items, and add them to the appropriate buildings
+foreach ($json_output as $index=>$item) {
+	
+	$building_name;
+	
+	if (!isset($building_array[(string)$item->lat][(string)$item->long]) {
+		$
+	}
+	
+	$building = new Building($item->lat, $item->lon, $building_name);
+}
+
 ?>
- <!DOCTYPE html> 
+<!DOCTYPE html> 
 <html> 
 	<head> 
-	<title>Page Title</title> 
+	<title>FindItNow</title> 
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
