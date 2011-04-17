@@ -1,7 +1,12 @@
 <?php
 $lat = $_REQUEST['lat'];
 $lon = $_REQUEST['lon'];
-$cat = $_REQUEST['cat'];
+$name = $_REQUEST['name'];
+
+// todo: I want to fix this
+$map_id = rand(10e16, 10e20);
+echo base_convert($n, 10, 36);
+
 ?>
  <!DOCTYPE html> 
 <html> 
@@ -13,70 +18,78 @@ $cat = $_REQUEST['cat'];
 	<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
        <style type="text/css">
         body { background: #dddddd;} 
-		.gmap { height: 330px; width: 100%; margin: 0px; padding: 0px }
+		.gmap { width: 100%; margin: 0px; padding: 0px }
+		.command-no-cache { padding: 0px !important }
 	</style>
 
 </head> 
-<body> 
+<body>  
 
-<div data-role="page" id="page-map1">
+<div data-role="page" id="page-map<?=$map_id?>" style="width:100%; height:100%">
 
 	<div data-role="header">
-		<h1>FindItNow > <?=$cat_readable?></h1>
+		<h1>FindItNow > <?=$name?></h1>
 	</div><!-- /header -->
 
-	<div data-role="content">	
+<div data-role="content" class="command-no-cache">	
     
-    <div id="map1" class="gmap"></div>
+    <div id="map<?=$map_id?>" class="gmap"></div>
 	
 	<script type="text/javascript">
-	    var map1, latlng1, options1, infowindow1, marker1, contentString1;
+	    var map<?=$map_id?>, latlng<?=$map_id?>, options<?=$map_id?>, infowindow<?=$map_id?>, marker<?=$map_id?>, contentString<?=$map_id?>;
 	    function initialize() {
 
-	        latlng1 = new google.maps.LatLng(37.4219955, -122.0860484);
-	        options1 = { zoom: 12, center: latlng1, mapTypeId: google.maps.MapTypeId.ROADMAP };
-	        map1 = new google.maps.Map(document.getElementById("map1"), options1);
+	        latlng<?=$map_id?> = new google.maps.LatLng(<?=$lat/1000000?>, <?=$lon/1000000?>);
+	        options<?=$map_id?> = { zoom: 17, center: latlng<?=$map_id?>, mapTypeId: google.maps.MapTypeId.ROADMAP };
+	        map<?=$map_id?> = new google.maps.Map(document.getElementById("map<?=$map_id?>"), options<?=$map_id?>);
 
 	    }
-	    $('#page-map1').live('pagecreate', function () {
+	    $('#page-map<?=$map_id?>').live('pagecreate', function () {
 
 	        //console.log("pagecreate");
             initialize();
 	    });
 
-	    $('#page-map1').live('pageshow', function () {
+	    $('#page-map<?=$map_id?>').live('pageshow', function () {
 
 	        //console.log("pageshow");
-            google.maps.event.trigger(map1, 'resize');
-	        map1.setOptions(options1);
+            google.maps.event.trigger(map<?=$map_id?>, 'resize');
+	        map<?=$map_id?>.setOptions(options<?=$map_id?>);
 
-             contentString1 = '<div>'+
-                '<p><b>Google</b><br />1600 Amphitheatre Parkway<br />' +
-                'Mountain View, CA 94043</p>'+
+             contentString<?=$map_id?> = '<div>'+
+                '<b><?=$name?></b>'+
                 '</div>';
 
-            infowindow1 = new google.maps.InfoWindow({
-                content: contentString1
+            infowindow<?=$map_id?> = new google.maps.InfoWindow({
+                content: contentString<?=$map_id?>,
+                maxWidth: 20
             });
 
-            marker1 = new google.maps.Marker({
-                position: latlng1, 
-                map: map1
+            marker<?=$map_id?> = new google.maps.Marker({
+                position: latlng<?=$map_id?>, 
+                map: map<?=$map_id?>
             });
 
-            google.maps.event.addListener(marker1, 'click', function() {
-                infowindow1.open(map1, marker1);
+            google.maps.event.addListener(marker<?=$map_id?>, 'click', function() {
+                infowindow<?=$map_id?>.open(map<?=$map_id?>, marker<?=$map_id?>);
             });   
 
-            infowindow1.open(map1, marker1);
+            infowindow<?=$map_id?>.open(map<?=$map_id?>, marker<?=$map_id?>);
 	    });
 
-        $('#page-map1').live('pagehide', function () {
+        $('#page-map<?=$map_id?>').live('pagehide', function () {
 
             //console.log("pagehide");
-            infowindow1.close();
+            infowindow<?=$map_id?>.close();
 	    });
-		
+$('[data-role=content]')
+  .height(
+    $(window).height() - 
+    (5 + $('[data-role=header]').last().height() 
+    + $('[data-role=footer]').last().height())
+  );
+// tell google to resize the map
+google.maps.event.trigger(map<?=$map_id?>, 'resize');		
 	</script> 
 	</div><!-- /content -->
 

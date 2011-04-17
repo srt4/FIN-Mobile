@@ -2,8 +2,7 @@
 $lat = $_REQUEST['lat'];
 $lon = $_REQUEST['lon'];
 $cat = $_REQUEST['cat'];
-// Maybe this should change in the future
-$cat_readable = $cat == "atms" ? "ATMs" : ucwords(str_replace("_", " ", $cat)); 
+
 // find stuff for the UW
 $jsonurl = "http://fincdn.org/getAllLocations.php?lat=47654799&long=-122307776&rad=6020";
 $jsonurl .= "&cat=" . $cat; 
@@ -27,46 +26,6 @@ class GeoPoint {
 	}
 }
 
-// item class.
-class Item {
-	public $lat;
-	public $lon;
-	public $info;
-	public $distance;
-	
-	function __construct($lat, $lon, $info) {
-		$this->lat = $lat;
-		$this->lon = $lon;
-		$this->info = $info;
-	
-	}
-	
-	// 
-	function distance($lat1, $lon1, $unit = "m") { 
-		// reassign the variables to work with this existing code without making it confusing
-		$lat2 = $this->lat;
-		$lon2 = $this->lon;
-		// now let's convert it to actual lat/lons
-		$lat2 /= 1000000;
-		$lat1 /= 1000000;
-		$lon2 /= 1000000;
-		$lon1 /= 1000000;
-	  $theta = $startlon - $lon2; 
-	  $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)); 
-	  $dist = acos($dist); 
-	  $dist = rad2deg($dist); 
-	  $miles = $dist * 60 * 1.1515;
-	  $unit = strtoupper($unit);
-	
-	  if ($unit == "K")
-	    return ($miles * 1.609344); 
-	  else if ($unit == "N") {
-	      return ($miles * 0.8684);
-	  else
-	       return $miles;
-	}
-}
-
 // building class, this may be a useful datatype 
 class Building {
 	public $lat;
@@ -85,7 +44,7 @@ $jsonurl = "http://fincdn.org/getBuildings.php?lat=47654799&long=-122307776";
 $json = file_get_contents($jsonurl,0,null,null);
 $building_json = json_decode($json);
 $building_array = array();
-// Build the map of building lat/lon pairs, to building name
+echo "<pre>";
 foreach ($building_json as $index=>$item) {
 	$geopoint = new GeoPoint($item->lat, $item->long);
 	$building = new Building($item->lat, $item->long, $item->name);
@@ -105,16 +64,14 @@ foreach ($building_json as $index=>$item) {
 <div data-role="page">
 
 	<div data-role="header">
-		<h1>FindItNow > <?=$cat_readable?></h1>
+		<h1>Page Title</h1>
 	</div><!-- /header -->
 
 	<div data-role="content">	
 		<ul id="itemList" data-role="listview" data-theme="c"> 
 			<?php
 				foreach($json_output as $index=>$item) {
-				    $itemName = explode('\n', $item->info);
-				    $mapUrl = "getMap.php?lat=" . $item->lat . "&lon=" . $item->long . "&name=" . $itemName[0];
-					echo "<li> <h2><a href=\"$mapUrl\">" . $building_array[(string)$item->lat][(string)$item->long]->name . "</a></h2>";
+					echo "<li> <h2>" . $building_array[(string)$item->lat][(string)$item->long]->name . "</h2>";
 					echo  str_replace('\n', "<br />", $item->info) . "</li>";
 				}
 			?>
@@ -128,7 +85,9 @@ foreach ($building_json as $index=>$item) {
 			*/ ?>	
 	</div><!-- /content -->
 
-	<? include('r/footer.php'); ?><!-- /footer -->
+	<div data-role="footer">
+		<h4>Page Footer</h4>
+	</div><!-- /footer -->
 </div><!-- /page -->
 
 </body>
