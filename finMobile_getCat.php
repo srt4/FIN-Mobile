@@ -115,7 +115,7 @@ echo("-->");*/
 						</span>
 						<br />
 						<span style="font-size:12px">
-						<?php echo str_replace('\n', "<br />", $item->info); ?>
+						<?= $info ?>
 						</span>
 						<?php if (($building->distance != -1)) { ?>
 						   <span class="ui-li-count" style="font-size:14px;color:<?=$distColor?>"><?=round($building->distance,2)?> mi</span>
