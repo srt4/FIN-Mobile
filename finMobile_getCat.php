@@ -145,26 +145,28 @@ echo("-->");
 	</div><!-- /header -->
 
 	<div data-role="content">	
-		<ul id="itemList" data-role="listview" data-theme="c"> 
+		<ul id="itemList" data-role="listview" data-filter="true" data-theme="c"> 
 			<?php
 				foreach($overall_array as $building) {
 					?>
 					<li> 
-						<h2>
-							<?php
-								$item = $building->items[0];
-								$itemName = explode('\n', $item->info);
-								$mapUrl = "getMap.php?lat=" . $item->lat . "&lon=" . $item->long . "&name=" . $itemName[0];
-								$distColor = $building->distance > 0.5 ? "red" : "green";
-							?>
-							<a href="<?=$mapUrl?>"><?=$building->name?></a>
-						</h2>
+						<?php
+							$item = $building->items[0];
+							$itemName = explode('\n', $item->info);
+							$mapUrl = "getMap.php?lat=" . $item->lat . "&lon=" . $item->lon . "&name=" . $itemName[0];
+							$distColor = $building->distance > 0.5 ? "red" : "green";
+						?>
+						<a href="<?=$mapUrl?>">
+						<span>
+							<u><?=$building->name?></u>
+						</span>
+						<br />
 						<?php echo str_replace('\n', "<br />", $item->info); ?>
-						
-						<span class="ui-li-aside" style="margin-right:-75px; width:75px; font-size:12px; color:<?=$distColor?>">
-						<span style="font-size:18px"><?=round($building->distance,2)?></span> mi <br /> <span style="font-size:12px; color: #222"><?=round($building->distance*25, 0)?> min</span></span>
+
+						<span class="ui-li-count" style="font-size:14px;color:<?=$distColor?>"><?=round($building->distance,2)?> mi</span>
+						</a>
 					</li>
-				<?php } ?>
+			<?php } ?>
         </ul> 
 	</div><!-- /content -->
 
