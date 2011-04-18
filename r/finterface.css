@@ -62,6 +62,10 @@ with the jQuery Mobile CSS file, or something similar */
 	white-space: normal;
 }
 
+.ul-li a:hover {
+    !important;
+}
+
 .ui-listview-inset .ui-li {
 	height:65px;
 	border-left-width: 1px;
@@ -70,5 +74,5 @@ with the jQuery Mobile CSS file, or something similar */
 
 /* Makes the search box larger! */
 .ui-input-search {  
-width: 40% !important;
-}
+/*width: 40% !important;
+*/}

@@ -1,6 +1,6 @@
 <?php
-$lat = $_REQUEST['lat'];
-$lon = $_REQUEST['lon'];
+$lat = isset($_REQUEST['lat']) ? $_REQUEST['lat'] : -1;
+$lon = isset($_REQUEST['lon']) ? $_REQUEST['lon'] : -1;
 $cat = $_REQUEST['cat'];
 // Maybe this should change in the future
 $cat_readable = $cat == "atms" ? "ATMs" : ucwords(str_replace("_", " ", $cat)); 
@@ -57,7 +57,8 @@ class Building {
 		$this->name = $name;
 		$this->items = array();
 		global $lat; global $lon;
-		$this->distance = $this->distance($lat, $lon);
+		if ($lat == -1) $this->distance = -1;
+		else $this->distance = $this->distance($lat, $lon);
 	}  
 	
 	// 
@@ -157,13 +158,17 @@ echo("-->");
 							$distColor = $building->distance > 0.5 ? "red" : "green";
 						?>
 						<a href="<?=$mapUrl?>">
-						<span>
+						<span style="font-size:13px">
 							<u><?=$building->name?></u>
 						</span>
 						<br />
+						<span style="font-size:12px">
 						<?php echo str_replace('\n', "<br />", $item->info); ?>
-
-						<span class="ui-li-count" style="font-size:14px;color:<?=$distColor?>"><?=round($building->distance,2)?> mi</span>
+						</span>
+						<?php if (($building->distance != -1)) { ?>
+						   <span class="ui-li-count" style="font-size:14px;color:<?=$distColor?>"><?=round($building->distance,2)?> mi</span>
+						
+						<?php } ?>
 						</a>
 					</li>
 			<?php } ?>
