@@ -8,7 +8,10 @@ $cat = $_REQUEST['cat'];
 $cat_readable = $cat == "atms" ? "ATMs" : ucwords(str_replace("_", " ", $cat)); 
 // find stuff for the UW
 $jsonurl = "http://fincdn.org/getLocations.php?lat=47654799&long=-122307776&rad=6020";
+if ($cat == "school_supplies")
+    $jsonurl = "http://fincdn.org/getAllLocations.php?lat=47654799&long=-122307776&rad=6020";
 $jsonurl .= "&cat=" . $cat; 
+
 
 $json = file_get_contents($jsonurl,0,null,null);
 $json_output = json_decode($json);
