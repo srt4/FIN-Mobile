@@ -28,7 +28,7 @@ echo base_convert($n, 10, 36);
 <div data-role="page" id="page-map<?=$map_id?>" style="width:100%; height:100%">
 
 	<div data-role="header">
-		<h1>FindItNow > <?=$name?></h1>
+		<h1>FindItNow > <?php $title=explode("<br />", $name); print $title[0]; ?></h1>
 	</div><!-- /header -->
 
 <div data-role="content" class="command-no-cache">	
@@ -56,13 +56,11 @@ echo base_convert($n, 10, 36);
             google.maps.event.trigger(map<?=$map_id?>, 'resize');
 	        map<?=$map_id?>.setOptions(options<?=$map_id?>);
 
-             contentString<?=$map_id?> = '<div>'+
-                '<b><?=$name?></b>'+
-                '</div>';
+             contentString<?=$map_id?> =
+                '<?=addslashes($name)?>';
 
             infowindow<?=$map_id?> = new google.maps.InfoWindow({
-                content: contentString<?=$map_id?>,
-                maxWidth: 20
+                content: contentString<?=$map_id?>
             });
 
             marker<?=$map_id?> = new google.maps.Marker({
