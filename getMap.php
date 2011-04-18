@@ -80,7 +80,7 @@ echo base_convert($n, 10, 36);
             //console.log("pagehide");
             infowindow<?=$map_id?>.close();
 	    });
-$('[data-role=content]')
+$('[class=command-no-cache]')
   .height(
     $(window).height() - 
     (5 + $('[data-role=header]').last().height() 
