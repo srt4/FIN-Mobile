@@ -33,11 +33,13 @@ class Item {
 	public $lon;
 	public $info;
 	public $distance;
+	public $floor;
 	
-	function __construct($latItem, $lonItem, $info) {
+	function __construct($latItem, $lonItem, $info, $floor=-9) {
 		$this->lat = $latItem;
 		$this->lon = $lonItem;
 		$this->info = $info;
+		$this->floor = $floor;
 	}
 }
 
@@ -46,13 +48,15 @@ class Building {
 	public $lat;
 	public $lon;
 	public $name;
-	public $floors;
+	public $items;
+	public $distance; 
 	
 	function __construct($latItem, $lonItem, $name) {
 		$this->lat = $latItem;
 		$this->lon = $lonItem;
 		$this->name = $name;
-		$this->floors = array();
+		$this->items = array();
+		global $lat; global $lon;
 		$this->distance = $this->distance($lat, $lon);
 	}  
 	
@@ -61,12 +65,13 @@ class Building {
 		// reassign the variables to work with this existing code without making it confusing
 		$lat2 = $this->lat;
 		$lon2 = $this->lon;
+
 		// now let's convert it to actual lat/lons
 		$lat2 /= 1000000;
-		$lat1 /= 1000000;
 		$lon2 /= 1000000;
-		$lon1 /= 1000000;
-		$theta = $startlon - $lon2; 
+			
+		// Actual calculations here.
+		$theta = $lon1 - $lon2; 
 		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)); 
 		$dist = acos($dist); 
 		$dist = rad2deg($dist); 
@@ -74,15 +79,21 @@ class Building {
 		$unit = strtoupper($unit);
 
 		if ($unit == "K")
-		return ($miles * 1.609344); 
+			return ($miles * 1.609344); 
 		else if ($unit == "N")
-		  return ($miles * 0.8684);
+			return ($miles * 0.8684);
 		else
-		   return $miles;
+			return $miles;
+	}
+	
+	// compare distances, helpful for sorting buildings
+	function _cmpDist($buildA, $buildB) {
+		if ($buildA->distance == $buildB->distance) {
+			return 0;
+		}
+			return ($buildA->distance < $buildB->distance) ? -1 : 1;
 	}
 }
-
-// **NOTE** in PHP, === compares if objects are the same instance; == compares if they are the same based on values
 
 $jsonurl = "http://fincdn.org/getBuildings.php?lat=47654799&long=-122307776";
 $json = file_get_contents($jsonurl,0,null,null);
@@ -100,15 +111,22 @@ $overall_array = array();
 // Go through the items, and add them to the appropriate buildings
 foreach ($json_output as $index=>$item) {
 	
-	$building_name;
+	if (!isset($building_array[(string)$item->lat][(string)$item->long]))
+		$building_array[(string)$item->lat][(string)$item->long] = new Building($item->lat, $item->long, "Outdoor Location");
 	
-	if (!isset($building_array[(string)$item->lat][(string)$item->long]) {
-		$
-	}
+	$building = $building_array[(string)$item->lat][(string)$item->long];
 	
-	$building = new Building($item->lat, $item->lon, $building_name);
+	$item = new Item($item->lat, $item->long, $item->info);
+	
+	array_push($building->items, $item);
+	
+	array_push($overall_array, $building);
 }
 
+usort($overall_array, array("Building", "_cmpDist"));
+echo ("<!--");
+print_r($overall_array);
+echo("-->");
 ?>
 <!DOCTYPE html> 
 <html> 
@@ -129,21 +147,25 @@ foreach ($json_output as $index=>$item) {
 	<div data-role="content">	
 		<ul id="itemList" data-role="listview" data-theme="c"> 
 			<?php
-				foreach($json_output as $index=>$item) {
-				    $itemName = explode('\n', $item->info);
-				    $mapUrl = "getMap.php?lat=" . $item->lat . "&lon=" . $item->long . "&name=" . $itemName[0];
-					echo "<li> <h2><a href=\"$mapUrl\">" . $building_array[(string)$item->lat][(string)$item->long]->name . "</a></h2>";
-					echo  str_replace('\n', "<br />", $item->info) . "</li>";
-				}
-			?>
+				foreach($overall_array as $building) {
+					?>
+					<li> 
+						<h2>
+							<?php
+								$item = $building->items[0];
+								$itemName = explode('\n', $item->info);
+								$mapUrl = "getMap.php?lat=" . $item->lat . "&lon=" . $item->long . "&name=" . $itemName[0];
+								$distColor = $building->distance > 0.5 ? "red" : "green";
+							?>
+							<a href="<?=$mapUrl?>"><?=$building->name?></a>
+						</h2>
+						<?php echo str_replace('\n', "<br />", $item->info); ?>
+						
+						<span class="ui-li-aside" style="margin-right:-75px; width:75px; font-size:12px; color:<?=$distColor?>">
+						<span style="font-size:18px"><?=round($building->distance,2)?></span> mi <br /> <span style="font-size:12px; color: #222"><?=round($building->distance*25, 0)?> min</span></span>
+					</li>
+				<?php } ?>
         </ul> 
-        <?php /*
-				$('<li></li>')
-			.hide()
-			.append('<h1><em><a href="' + gmapsLink + '">'+ item.building + '</a></em></h1><h3>'+ item.info + '</h3><span class="ui-li-aside" style="margin-right:-75px; width:75px; font-size:12px; color:' + distColor + '"><span style="font-size:18px">' + item.distance + '</span> mi <br /> <span style="font-size:12px; color: #222">' + item.walking + ' min</span></span>')
-			.appendTo('#wikiList')
-			.show();	
-			*/ ?>	
 	</div><!-- /content -->
 
 	<? include('r/footer.php'); ?><!-- /footer -->
