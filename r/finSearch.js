@@ -74,9 +74,16 @@ geonames.search = function(lat,lng) {
 function onSuccess(position) {
 	currLoc = { lat: position.coords.latitude, lon: position.coords.longitude };
 	geonames.search(position.coords.latitude,position.coords.longitude);
+    $('a').attr("href", function(i, href) {
+        return href + "&lat=" + currLoc.lat + "&lon=" + currLoc.lon;
+    });	
 }
  
 // Error function for Geolocation call
 function onError(msg) {
-	alert(msg);
+    // alert the user that they're mean for not letting us see loc? uncomment the next line
+	//alert(msg);
+    $('a').attr("href", function(i, href) {
+        return href + "&lat=" + currLoc.lat + "&lon=" + currLoc.lon;
+    });		
 }

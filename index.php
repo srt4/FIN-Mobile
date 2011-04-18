@@ -10,12 +10,6 @@
 <script src="r/addListeners.js"></script>
 <script src="r/helperMethods.js"></script>
 <script src="r/finSearch.js"></script>
-	<script src="http://maps.google.com/maps/api/js?sensor=false"></script>    <style type="text/css">
-		.gmap { height:100%; width: 100%; margin: 0px; padding: 0px }
-	</style>
-	<style>
-	.command-no-cache {padding:0px;}
-	</style>
 </head> 
 <body> 
 <div data-role="page" data-theme="a"> 
@@ -24,52 +18,53 @@
 	</div> 
     <div data-role="content">
 		<h2 style="text-align:center">Select a category</h2>
-		<ul data-role="listview" data-inset="true" data-filter="true" data-split-theme="a" data-split-icon="arrow-r"> 
-		    <li><a href="atms"> 
-				<img src="drawable/atms.png" /> 
-				<h1>ATMs</h1>
-				</a> 
-			</li>
-			<li><a href="bike_racks"> 
-				<img src="drawable/bike_racks.png" style="margin-top: 10px" /> 
-				<h1>Bike Racks</h1>
+		<ul data-role="listview" data-inset="true" data-split-theme="a" data-split-icon="arrow-r"> 
+			<li><a href="coffee"> 
+				<img src="drawable/coffee.png" height="60" /> 
+				<h1 style="valign:middle">Coffee</h1>
 				</a> 
 			</li> 
-			<li><a href="coffee"> 
-				<img src="drawable/coffee.png" /> 
-				<h1>Coffee</h1>
+			<li><a href="vending"> 
+				<img src="drawable/vending.png" height="60" /> 
+				<h1>Vending</h1> 
 				</a> 
-			</li>
+			</li> 
 			<li><a href="dining"> 
-				<img src="drawable/dining.png" /> 
+				<img src="drawable/dining.png" height="60" /> 
 				<h1>Dining</h1> 
 				</a> 
 			</li> 
 			<li><a href="mailboxes"> 
-				<img src="drawable/mailboxes.png" /> 
+				<img src="drawable/mailboxes.png" height="60" /> 
 				<h1>Mailboxes</h1> 
 				</a> 
 			</li> 
+			<li><a href="school_supplies"> 
+				<img src="drawable/school_supplies.png" height="60" /> 
+				<h1>Not working-School Supplies</h1> 
+				</a> 
+			</li> 
 			<li><a href="restrooms"> 
-				<img src="drawable/restrooms.png" /> 
+				<img src="drawable/restrooms.png" height="60" /> 
 				<h1>Restrooms</h1> 
 				</a> 
-			</li>
-			<li><a href="school_supplies"> 
-				<img src="drawable/school_supplies.png" /> 
-				<h1>School Supplies</h1> 
-				</a> 
 			</li> 
-			<li><a href="vending"> 
-				<img src="drawable/vending.png" /> 
-				<h1>Vending</h1> 
-				</a> 
-			</li> 
-		</ul>
-		<!-- 
+		</ul> 
 		<div data-role="fieldcontain">
 			<input type="search"  id="search" value="Search not implemented yet" data-theme="c" />
-		</div>-->
+		</div>
+    </div> 
+    <div data-role="footer"> 
+    	<h4>Project FIN <img src="drawable/icon_with_stroke.png" style="height:30px;vertical-align:middle;line-height:30px" /></h4>
+    </div> 
+</div> 
+<div data-role="page" id="dashboard"> 
+	<div data-role="header"> 
+    	<h1>Placemarks</h1> 
+    </div> 
+    <div data-role="content"> 
+    	<ul id="wikiList" data-role="listview" data-theme="c"> 
+        </ul> 
     </div> 
     <div data-role="footer"> 
     	<h4>Project FIN <img src="drawable/icon_with_stroke.png" style="height:30px;vertical-align:middle;line-height:30px" /></h4>
