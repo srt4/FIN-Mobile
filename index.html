@@ -14,13 +14,26 @@
 		.gmap { height:100%; width: 100%; margin: 0px; padding: 0px }
 	</style>
 	<style>
+	/* set some styles so there's no padding for the map */
 	.command-no-cache {padding:0px;}
+	/* make the active nav-tab button's text be black */
+	.ui-btn-active {
+		color:black;
+		font-weight: bold;
+		text-shadow: white 0px 1px 1px;
+	}
 	</style>
 </head> 
 <body> 
 <div data-role="page" data-theme="a"> 
 	<div data-role="header"> 
     	<h1>FindItNow</h1>
+		<div data-role="navbar">
+			<ul>
+				<li><a href="index.html" class="ui-btn-active">Categories</a></li>
+				<li><a href="buildings.html">Buildings</a></li>
+			</ul>
+		</div><!-- /navbar -->
 	</div> 
     <div data-role="content">
 		<h2 style="text-align:center">Select a category</h2>
