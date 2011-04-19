@@ -1,0 +1,64 @@
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+<style>
+div#gmap {
+width: 100%;
+height: 300px;
+}
+</style>
+<body>
+<center>
+<!-- MAP HOLDER -->
+<div id="gmap"></div>
+<!-- REFERENCES -->
+lat:<span id="lat"></span> lon:<span id="lon"></span><br/>
+zoom level: <span id="zoom_level"></span>
+</center>
+</body>
+
+<script>
+var myLatlng = new google.maps.LatLng(38.971154274048345,1.415863037109375); // IBIZA <img src="http://www.ramirezcobos.com/wp-includes/images/smilies/icon_smile.gif" alt=":)" class="wp-smiley">
+var myOptions = {
+zoom: 16,
+center: myLatlng,
+mapTypeId: google.maps.MapTypeId.ROADMAP
+}
+map = new google.maps.Map(document.getElementById("gmap"), myOptions);
+// marker refers to a global variable
+marker = new google.maps.Marker({
+position: myLatlng,
+map: map
+});
+// if center changed then update lat and lon document objects
+google.maps.event.addListener(map, 'center_changed', function() {
+var location = map.getCenter();
+document.getElementById("lat").innerHTML = location.lat();
+document.getElementById("lon").innerHTML = location.lng();
+// call function to reposition marker location
+placeMarker(location);
+});
+// if zoom changed, then update document object with new info
+google.maps.event.addListener(map, 'zoom_changed', function() {
+zoomLevel = map.getZoom();
+document.getElementById("zoom_level").innerHTML = zoomLevel;
+});
+// double click on the marker changes zoom level
+google.maps.event.addListener(marker, 'dblclick', function() {
+zoomLevel = map.getZoom()+1;
+if (zoomLevel == 20) {
+zoomLevel = 10;
+}
+document.getElementById("zoom_level").innerHTML = zoomLevel;
+map.setZoom(zoomLevel);
+});
+
+document.getElementById("zoom_level").innerHTML = 16;
+document.getElementById("lat").innerHTML = 38.971154274048345;
+document.getElementById("lon").innerHTML = 1.415863037109375;
+
+function placeMarker(location) {
+var clickedLocation = new google.maps.LatLng(location);
+marker.setPosition(location);
+}
+window.onload = function(){initialize()};
+</script>

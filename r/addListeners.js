@@ -11,7 +11,7 @@ $(document).ready(function(){
             }
     });
     // add some placeholder links; hopefully these get amended later
-    $('a').attr("href", function(i, href) {
+    $('content-home').find('a').attr("href", function(i, href) {
         return "finMobile_getCat.php?cat=" + href;
     });	
     // let's query location on pageload.
@@ -23,16 +23,4 @@ $(document).ready(function(){
 		$('#getLocation').unbind('click');
 	}
 });
-
-buildingsArray = new Array();
-var buildingsJsonUrl = "http://fincdn.org/getBuildings.php";
-$.getJSON(buildingsJsonUrl, 
-		function(json) {
-			$.each(json, function(index, item){
-				var array = new Array();
-				array["LONG" + item.long + ""] = item.name;
-				buildingsArray["LAT" + item.lat + ""] = array;
-			});
-		}
-);
 
