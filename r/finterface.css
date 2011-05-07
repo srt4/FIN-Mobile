@@ -66,6 +66,15 @@ with the jQuery Mobile CSS file, or something similar */
     !important;
 }
 
+
+.content-home {
+    padding-top: 0px;
+}
+
+h2 {
+    margin: 0.7em 0px;
+    text-align:center;
+}
 .ui-listview-inset .ui-li {
 	height:65px;
 	border-left-width: 1px;
