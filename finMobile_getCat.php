@@ -101,10 +101,12 @@ echo("-->");*/
 			<?php
 				foreach($overall_array as $building) {
 					?>
-					<li> 
+					<li>
 						<?php
 							$item = $building->items[0];
-							$info = preg_replace( '/\n|\r/', '<br />', $item->info );
+							$info = nl2br($item->info);
+							$info = str_replace("\\n","\n<BR>",$info);
+							$info = stripslashes($info);
 							$itemName = explode('\n', $item->info);
 							$mapUrl = "getMap.php?lat=" . $item->lat . "&lon=" . $item->lon . "&name=" . urlencode($info);
 							$distColor = $building->distance > 0.5 ? "red" : "green";

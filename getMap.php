@@ -45,8 +45,6 @@ echo base_convert($n, 10, 36);
 
 	    }
 	    $('#page-map<?=$map_id?>').live('pagecreate', function () {
-
-	        //console.log("pagecreate");
             initialize();
 	    });
 
